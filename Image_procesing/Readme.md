@@ -1,1 +1,1 @@
-**projects** 
+**Image Processing Projects** 
