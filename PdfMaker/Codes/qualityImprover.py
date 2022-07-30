@@ -4,42 +4,39 @@ from glob import glob
 
 
 def qualityoptimizer(paths,cwd):
-    watermark = 'waterMaker/images.jpeg'
+    watermark = 'waterMaker/image.png'
     waterMarkImage = cv.imread(watermark)
-
+    row,column,_ = waterMarkImage.shape
     for path in paths:
         image = cv.imread(path)
-        arr = list(cv.split(image))
-        # _,arr[0]  = cv.threshold(arr[0], 120, 255, cv.THRESH_BINARY)
-        # _,arr[1]  = cv.threshold(arr[1], 120, 255, cv.THRESH_BINARY)
-        # _,arr[2]  = cv.threshold(arr[2], 120, 255, cv.THRESH_BINARY)
-        filtered_image = cv.merge(arr)
+        img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        ret, thresh = cv.threshold(img, 100, 240, cv.THRESH_TOZERO)
+        filtered_image = cv.merge([thresh,thresh,thresh])
         r,c,d = filtered_image.shape
-        # fourierTransformedImage = np.fft.fftshift(np.fft.fft2(img))
-        # magnitude_spectrum = np.log(np.abs(fourierTransformedImage))
-        # r,c = magnitude_spectrum.shape 
-        # r1 = r//2
-        # c1 = c//2
-        # do = 300
-        # hf = np.zeros((r,c))
-        # for i in range(len(magnitude_spectrum)):
-        #     for j in range(len(magnitude_spectrum[i])):
-        #         if ((i - r1)**2 + (j -c1)**2)**0.5 >= do:
-        #             hf[i,j] = 0
-                    
-        #         else:
-        #             duv = ((i - r1)**2 + (j -c1)**2)
-        #             hf[i,j] = np.exp(-duv/(2*do)**2)
-        # final = fourierTransformedImage*hf
+        new_image_width = c
+        new_image_height = r
         
-        waterMarkImage.resize((r,c,d))
+        if row > r :
+            waterMarkImage = waterMarkImage[:r,:,:]
+        if column > c:
+            waterMarkImage = waterMarkImage[:,:c,:]
+        row,column,_ = waterMarkImage.shape
+        color = (255,255,255)
+        pad = np.full((new_image_height,new_image_width, 3), color, dtype=np.uint8)
         
-        print(waterMarkImage.shape,filtered_image.shape)
-        cv.imshow('water',waterMarkImage)
-        cv.waitKey()
-        # filtered_image = abs(np.fft.ifft2(final))
         
-        # filtered_image -= waterMarkImage
+        center_x = abs(r - row )//2
+        center_y = abs(c - column)//2
+        pad[center_x:center_x + row, center_y:center_y + column] = waterMarkImage
+        
+        gray_mark =  cv.cvtColor(pad, cv.COLOR_BGR2GRAY)
+        mean = gray_mark.mean()
+        ret, gray_mark = cv.threshold(gray_mark, 225, 255, cv.THRESH_BINARY_INV)
+        gray_mark =gray_mark//15
+        gray_mark = cv.merge([gray_mark,gray_mark,gray_mark])
+        cv.imshow('water',gray_mark)
+        cv.waitKey(0)
+        filtered_image += gray_mark
 
        
         cv.imwrite(path,filtered_image)
