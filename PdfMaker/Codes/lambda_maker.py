@@ -18,11 +18,11 @@ def lambda_maker():
     
     
     paths = croper(paths,cwd)           # paths to processed images  (croped)
-    paths = qualityoptimizer(paths,cwd)
+    paths,dimensions = qualityoptimizer(paths,cwd)
     
     
     pdf = fpdf.FPDF()
 
-    pdfmaker(paths,pdf)
+    pdfmaker(paths,pdf,dimensions)
 
 lambda_maker()
