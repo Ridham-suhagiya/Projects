@@ -1,12 +1,14 @@
 import cv2 as cv
 import numpy as np
 from glob import glob
-
+import os
 
 def qualityoptimizer(paths,cwd):
-    watermark = 'waterMaker/image.png'
+
+    watermark = os.path.join(cwd,'waterMaker/image.png')
+    
     waterMarkImage = cv.imread(watermark)
-    # row,column,_ = waterMarkImage.shape
+
     waterMarkImage = cv.resize(waterMarkImage,dsize = (800,1128), interpolation=cv.INTER_CUBIC)
     dimensions = []
     for path in paths:
@@ -36,8 +38,9 @@ def qualityoptimizer(paths,cwd):
         gray_mark =gray_mark//15
         gray_mark = cv.merge([gray_mark,gray_mark,gray_mark])
         
+        
         filtered_image -= gray_mark
-
+        
        
         cv.imwrite(path,filtered_image)
     return glob(cwd + "/processed_images/*")

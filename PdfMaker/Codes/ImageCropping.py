@@ -2,14 +2,15 @@ import cv2 as cv
 import numpy as np
 from glob import glob
 import os 
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+
+
 def croper(paths,cwd):
     for i,path in enumerate(paths):
         extension = path.strip().split('.')[-1]
         image = cv.imread(path)
         # gray = cv.cvtColor(image,cv.COLOR_BGR2GRAY)
         row,col,_ =image.shape
+        
         if row < 800 or col < 650:
             color = (255,255,255)
             pad = np.full((1128,800, 3), color, dtype=np.uint8)

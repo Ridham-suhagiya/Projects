@@ -10,7 +10,7 @@ from qualityImprover import qualityoptimizer
 # image 
 def lambda_maker():
     cwd  = os.getcwd()
-    
+  
     
     paths = glob(cwd + "/images/*.png")      # paths to unprocessed images
     paths += glob(cwd + "/images/*.jpg")
